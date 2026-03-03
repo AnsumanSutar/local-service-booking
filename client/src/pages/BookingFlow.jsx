@@ -19,7 +19,7 @@ const BookingFlow = ({ user }) => {
     useEffect(() => {
         const fetchService = async () => {
             try {
-                const res = await api.get('/services');
+                const res = await api.get('/api/services');
                 const item = res.data.find(s => s.id === serviceId);
                 setService(item);
             } catch (err) {
@@ -43,7 +43,7 @@ const BookingFlow = ({ user }) => {
         if (file) data.append('requirements', file);
 
         try {
-            await api.post('/bookings', data);
+            await api.post('/api/bookings', data);
             setBooked(true);
             setTimeout(() => navigate('/history'), 2000);
         } catch (err) {

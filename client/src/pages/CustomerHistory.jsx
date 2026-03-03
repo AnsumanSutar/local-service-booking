@@ -9,7 +9,7 @@ const CustomerHistory = ({ user }) => {
 
     const fetchBookings = async () => {
         try {
-            const res = await api.get(`/users/${user.id}/bookings`, { params: { role: 'CUSTOMER' } });
+            const res = await api.get(`/api/users/${user.id}/bookings`, { params: { role: 'CUSTOMER' } });
             setBookings(res.data);
         } catch (err) {
             console.error(err);
@@ -25,7 +25,7 @@ const CustomerHistory = ({ user }) => {
     const submitReview = async (e) => {
         e.preventDefault();
         try {
-            await api.post('/reviews', {
+            await api.post('/api/reviews', {
                 ...reviewForm,
                 customerId: user.id
             });

@@ -13,7 +13,7 @@ const Discovery = ({ user }) => {
     const fetchServices = async () => {
         setLoading(true);
         try {
-            const res = await api.get('/services', {
+            const res = await api.get('/api/services', {
                 params: { query: search, city, category }
             });
             setServices(res.data);

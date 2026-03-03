@@ -9,7 +9,7 @@ const ProviderDashboard = ({ user }) => {
 
     const fetchJobs = async () => {
         try {
-            const res = await api.get(`/users/${user.id}/bookings`, { params: { role: 'PROVIDER' } });
+            const res = await api.get(`/api/users/${user.id}/bookings`, { params: { role: 'PROVIDER' } });
             setJobs(res.data);
         } catch (err) {
             console.error(err);
@@ -28,7 +28,7 @@ const ProviderDashboard = ({ user }) => {
         if (file) data.append('photo', file);
 
         try {
-            await api.patch(`/bookings/${bookingId}/status`, data);
+            await api.patch(`/api/bookings/${bookingId}/status`, data);
             fetchJobs();
         } catch (err) {
             alert(err.response?.data?.error || err.message);

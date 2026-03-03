@@ -8,7 +8,7 @@ const AdminPanel = () => {
 
     const fetchPendingReviews = async () => {
         try {
-            const res = await api.get('/admin/reviews/pending');
+            const res = await api.get('/api/admin/reviews/pending');
             setReviews(res.data);
         } catch (err) {
             console.error(err);
@@ -23,7 +23,7 @@ const AdminPanel = () => {
 
     const approveReview = async (reviewId) => {
         try {
-            await api.patch(`/admin/reviews/${reviewId}/approve`);
+            await api.patch(`/api/admin/reviews/${reviewId}/approve`);
             fetchPendingReviews();
         } catch (err) {
             alert(err.message);
