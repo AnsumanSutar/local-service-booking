@@ -1,0 +1,99 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// User Roles: CUSTOMER, PROVIDER, ADMIN
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  name          String?
+  role          String    @default("CUSTOMER")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relationships
+  profile       Profile?
+  services      Service[]   // If provider
+  bookings      Booking[]   // As customer
+  assignedJobs  Booking[]   @relation("ProviderBookings") // As provider
+  reviews       Review[]    @relation("CustomerReviews") // Reviews given
+}
+
+model Profile {
+  id          String   @id @default(uuid())
+  bio         String?
+  skills      String?  // Comma separated
+  city        String?
+  isOnline    Boolean  @default(false)
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id])
+  portfolio   PortfolioItem[]
+}
+
+model PortfolioItem {
+  id        String   @id @default(uuid())
+  imageUrl  String
+  title     String?
+  profileId String
+  profile   Profile  @relation(fields: [profileId], references: [id])
+}
+
+model Service {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  category    String
+  price       Float
+  priceType   String   @default("FIXED") // FIXED or HOURLY
+  city        String
+  providerId  String
+  provider    User     @relation(fields: [providerId], references: [id])
+  bookings    Booking[]
+  createdAt   DateTime @default(now())
+}
+
+// Booking States: REQUESTED, CONFIRMED, IN_PROGRESS, COMPLETED, CANCELLED
+model Booking {
+  id              String        @id @default(uuid())
+  status          String        @default("REQUESTED")
+  scheduledAt     DateTime
+  address         String
+  notes           String?
+  requirementsUrl String?       // Image of requirements
+  beforeImageUrl  String?
+  afterImageUrl   String?
+  cancelReason    String?
+  
+  customerId      String
+  customer        User          @relation(fields: [customerId], references: [id])
+  
+  providerId      String
+  provider        User          @relation("ProviderBookings", fields: [providerId], references: [id])
+  
+  serviceId       String
+  service         Service       @relation(fields: [serviceId], references: [id])
+  
+  review          Review?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model Review {
+  id          String   @id @default(uuid())
+  rating      Int
+  comment     String
+  isApproved  Boolean  @default(false)
+  
+  bookingId   String   @unique
+  booking     Booking  @relation(fields: [bookingId], references: [id])
+  
+  customerId  String
+  customer    User     @relation("CustomerReviews", fields: [customerId], references: [id])
+  
+  createdAt   DateTime @default(now())
+}

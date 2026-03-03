@@ -1,0 +1,36 @@
+# Root .gitignore
+
+# Dependencies
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Build
+client/dist/
+
+# Environment / Secret
+.env
+server/.env
+client/.env.local
+
+# Database
+server/prisma/dev.db
+server/prisma/dev.db-journal
+server/*.db
+server/*.db-journal
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+server/full_ids.txt
+server/users.json
+server/db_dump.json
+
+# Image Uploads (Local)
+server/uploads/*
+!server/uploads/.gitkeep
+
+# OS files
+.DS_Store
+Thumbs.db
