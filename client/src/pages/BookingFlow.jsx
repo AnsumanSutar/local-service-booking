@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { Calendar, MapPin, FileText, Camera, CheckCircle } from 'lucide-react';
-
-const API_URL = 'http://localhost:3001/api';
+import api from '../api';
 
 const BookingFlow = ({ user }) => {
     const { serviceId } = useParams();
@@ -21,7 +19,7 @@ const BookingFlow = ({ user }) => {
     useEffect(() => {
         const fetchService = async () => {
             try {
-                const res = await axios.get(`${API_URL}/services`);
+                const res = await api.get('/services');
                 const item = res.data.find(s => s.id === serviceId);
                 setService(item);
             } catch (err) {
@@ -45,7 +43,7 @@ const BookingFlow = ({ user }) => {
         if (file) data.append('requirements', file);
 
         try {
-            await axios.post(`${API_URL}/bookings`, data);
+            await api.post('/bookings', data);
             setBooked(true);
             setTimeout(() => navigate('/history'), 2000);
         } catch (err) {

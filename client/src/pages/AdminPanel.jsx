@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Shield, MessageSquare, Check, X, AlertCircle } from 'lucide-react';
-
-const API_URL = 'http://localhost:3001/api';
+import api from '../api';
 
 const AdminPanel = () => {
     const [reviews, setReviews] = useState([]);
@@ -10,7 +8,7 @@ const AdminPanel = () => {
 
     const fetchPendingReviews = async () => {
         try {
-            const res = await axios.get(`${API_URL}/admin/reviews/pending`);
+            const res = await api.get('/admin/reviews/pending');
             setReviews(res.data);
         } catch (err) {
             console.error(err);
@@ -25,7 +23,7 @@ const AdminPanel = () => {
 
     const approveReview = async (reviewId) => {
         try {
-            await axios.patch(`${API_URL}/admin/reviews/${reviewId}/approve`);
+            await api.patch(`/admin/reviews/${reviewId}/approve`);
             fetchPendingReviews();
         } catch (err) {
             alert(err.message);

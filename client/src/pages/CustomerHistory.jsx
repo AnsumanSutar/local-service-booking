@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Clock, MapPin, Star, AlertCircle } from 'lucide-react';
-
-const API_URL = 'http://localhost:3001/api';
+import api from '../api';
 
 const CustomerHistory = ({ user }) => {
     const [bookings, setBookings] = useState([]);
@@ -11,7 +9,7 @@ const CustomerHistory = ({ user }) => {
 
     const fetchBookings = async () => {
         try {
-            const res = await axios.get(`${API_URL}/users/${user.id}/bookings`, { params: { role: 'CUSTOMER' } });
+            const res = await api.get(`/users/${user.id}/bookings`, { params: { role: 'CUSTOMER' } });
             setBookings(res.data);
         } catch (err) {
             console.error(err);
@@ -27,7 +25,7 @@ const CustomerHistory = ({ user }) => {
     const submitReview = async (e) => {
         e.preventDefault();
         try {
-            await axios.post(`${API_URL}/reviews`, {
+            await api.post('/reviews', {
                 ...reviewForm,
                 customerId: user.id
             });

@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Search, MapPin, Tag, Star, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
-const API_URL = 'http://localhost:3001/api';
+import api from '../api';
 
 const Discovery = ({ user }) => {
     const [services, setServices] = useState([]);
@@ -15,7 +13,7 @@ const Discovery = ({ user }) => {
     const fetchServices = async () => {
         setLoading(true);
         try {
-            const res = await axios.get(`${API_URL}/services`, {
+            const res = await api.get('/services', {
                 params: { query: search, city, category }
             });
             setServices(res.data);

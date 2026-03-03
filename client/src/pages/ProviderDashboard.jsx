@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Play, CheckCircle, XCircle, Camera, Clock, User } from 'lucide-react';
-
-const API_URL = 'http://localhost:3001/api';
+import api from '../api';
 
 const ProviderDashboard = ({ user }) => {
     const [jobs, setJobs] = useState([]);
@@ -11,7 +9,7 @@ const ProviderDashboard = ({ user }) => {
 
     const fetchJobs = async () => {
         try {
-            const res = await axios.get(`${API_URL}/users/${user.id}/bookings`, { params: { role: 'PROVIDER' } });
+            const res = await api.get(`/users/${user.id}/bookings`, { params: { role: 'PROVIDER' } });
             setJobs(res.data);
         } catch (err) {
             console.error(err);
@@ -30,7 +28,7 @@ const ProviderDashboard = ({ user }) => {
         if (file) data.append('photo', file);
 
         try {
-            await axios.patch(`${API_URL}/bookings/${bookingId}/status`, data);
+            await api.patch(`/bookings/${bookingId}/status`, data);
             fetchJobs();
         } catch (err) {
             alert(err.response?.data?.error || err.message);

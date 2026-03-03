@@ -19,6 +19,13 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());
+
+// Request logging middleware
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+});
+
 app.use('/uploads', express.static('uploads'));
 
 app.get('/', (req, res) => {
@@ -190,8 +197,12 @@ app.patch('/api/admin/reviews/:reviewId/approve', async (req, res) => {
 });
 
 // Helper: Seed Initial Users & Services
-app.post('/api/seed', async (req, res) => {
+app.get('/api/seed', async (req, res) => {
   try {
+    // Check if seeded already
+    const count = await prisma.user.count();
+    if (count > 0) return res.json({ message: 'Database already has data. Skipping seed.' });
+
     const admin = await prisma.user.create({ data: { email: 'admin@local.com', name: 'Admin User', role: 'ADMIN' } });
     const customer = await prisma.user.create({ data: { email: 'customer@local.com', name: 'John Doe', role: 'CUSTOMER' } });
     const provider = await prisma.user.create({
