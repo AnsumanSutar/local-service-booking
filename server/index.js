@@ -199,14 +199,32 @@ app.patch('/api/admin/reviews/:reviewId/approve', async (req, res) => {
 // Helper: Seed Initial Users & Services
 app.get('/api/seed', async (req, res) => {
   try {
-    // Check if seeded already
-    const count = await prisma.user.count();
-    if (count > 0) return res.json({ message: 'Database already has data. Skipping seed.' });
+    console.log('[SEED] Starting seeding process...');
 
-    const admin = await prisma.user.create({ data: { email: 'admin@local.com', name: 'Admin User', role: 'ADMIN' } });
-    const customer = await prisma.user.create({ data: { email: 'customer@local.com', name: 'John Doe', role: 'CUSTOMER' } });
-    const provider = await prisma.user.create({
-      data: {
+    // Create users using upsert to avoid duplicates
+    const admin = await prisma.user.upsert({
+      where: { email: 'admin@local.com' },
+      update: {},
+      create: { email: 'admin@local.com', name: 'Admin User', role: 'ADMIN' }
+    });
+
+    const customer = await prisma.user.upsert({
+      where: { email: 'customer@local.com' },
+      update: {},
+      create: { email: 'customer@local.com', name: 'John Doe', role: 'CUSTOMER' }
+    });
+
+    const provider = await prisma.user.upsert({
+      where: { email: 'provider@local.com' },
+      update: {
+        profile: {
+          upsert: {
+            create: { bio: 'Top rated handyman', city: 'New York', skills: 'Plumbing, Electrical', isOnline: true },
+            update: { isOnline: true }
+          }
+        }
+      },
+      create: {
         email: 'provider@local.com',
         name: 'Pro Handyman',
         role: 'PROVIDER',
@@ -214,15 +232,22 @@ app.get('/api/seed', async (req, res) => {
       }
     });
 
-    await prisma.service.createMany({
-      data: [
-        { name: 'Leaking Pipe Fix', description: 'Professional pipe repair', category: 'Plumbing', price: 150, city: 'New York', providerId: provider.id },
-        { name: 'Modern Kitchen Painting', description: 'Full kitchen wall coating', category: 'Painting', price: 50, priceType: 'HOURLY', city: 'New York', providerId: provider.id },
-      ],
-    });
+    // Check if services exist
+    const serviceCount = await prisma.service.count();
+    if (serviceCount === 0) {
+      console.log('[SEED] Creating initial services...');
+      await prisma.service.createMany({
+        data: [
+          { name: 'Leaking Pipe Fix', description: 'Professional pipe repair', category: 'Plumbing', price: 150, city: 'New York', providerId: provider.id },
+          { name: 'Modern Kitchen Painting', description: 'Full kitchen wall coating', category: 'Painting', price: 50, priceType: 'HOURLY', city: 'New York', providerId: provider.id },
+        ],
+      });
+    }
 
-    res.json({ message: 'Seeded successfully' });
+    console.log('[SEED] Completed successfully');
+    res.json({ message: 'Seeded successfully', servicesCreated: serviceCount === 0 });
   } catch (err) {
+    console.error('[SEED] Error:', err.message);
     res.status(400).json({ error: err.message });
   }
 });
