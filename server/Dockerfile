@@ -5,13 +5,11 @@ WORKDIR /app
 
 # Install dependencies
 COPY package*.json ./
+COPY prisma ./prisma/
 RUN npm install
 
 # Copy source code
 COPY . .
-
-# Generate Prisma client
-RUN npx prisma generate
 
 # Create data directory for SQLite
 RUN mkdir -p prisma
