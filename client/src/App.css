@@ -176,6 +176,12 @@
   background-position: right center;
 }
 
+.role-switcher-container select option {
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  padding: 10px;
+}
+
 .avatar-wrapper {
   position: relative;
   cursor: pointer;
