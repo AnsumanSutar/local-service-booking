@@ -4,13 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npx prisma generate --schema=schema.prisma && npx prisma db push --accept-data-loss --schema=schema.prisma && node index.js",
-    "build": "npx prisma generate --schema=schema.prisma && npx prisma db push --accept-data-loss --schema=schema.prisma",
-    "postinstall": "npx prisma generate --schema=schema.prisma",
+    "start": "npx prisma generate --schema=prisma/schema.prisma && npx prisma db push --accept-data-loss --schema=prisma/schema.prisma && node index.js",
+    "build": "npx prisma generate --schema=prisma/schema.prisma && npx prisma db push --accept-data-loss --schema=prisma/schema.prisma",
+    "postinstall": "npx prisma generate --schema=prisma/schema.prisma",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "prisma": {
-    "schema": "schema.prisma"
+    "schema": "prisma/schema.prisma"
   },
   "keywords": [],
   "author": "",
